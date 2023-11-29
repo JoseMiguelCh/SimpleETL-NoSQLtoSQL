@@ -1,0 +1,6 @@
+*.pyc
+.vscode/*
+poetry.lock
+jars/*
+pyproject.toml
+.env
