@@ -46,7 +46,6 @@ def get_auditoria_df(df):
     auditoria_df = df.select("id", "auditoria.*")
     return main_df, auditoria_df
 
-
 def expand_array_into_struct(df, join_key, array_column_name):
     df = df.withColumn(array_column_name, explode(col(array_column_name)))
     df = df.select(join_key, f"{array_column_name}.*")

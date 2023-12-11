@@ -58,12 +58,7 @@ lista_usuarios_hab = StructType([
     StructField("numeroRegistros", IntegerType(), True),
     StructField("Usuarios", usuario_schema, True),
     StructField("auditoria", usuarios_auditoria_schema, True),
-    StructField("id", StringType(), True),
-    StructField("_rid", StringType(), True),
-    StructField("_self", StringType(), True),
-    StructField("_etag", StringType(), True),
-    StructField("_attachments", StringType(), True),
-    StructField("_ts", LongType(), True)
+    StructField("id", StringType(), True)
 ])
 
 lista_usuarios_hab_map = {
@@ -154,12 +149,7 @@ pruebas_hab_schema = StructType([
     StructField("codigoRespuesta", IntegerType(), True),
     StructField("pruebas", pruebas_schema, True),
     StructField("auditoria", auditoria_schema, True),
-    StructField("id", StringType(), True),
-    StructField("_rid", StringType(), True),
-    StructField("_self", StringType(), True),
-    StructField("_etag", StringType(), True),
-    StructField("_attachments", StringType(), True),
-    StructField("_ts", LongType(), True)
+    StructField("id", StringType(), True)
 ])
 
 pruebas_hab_map = {
@@ -235,13 +225,7 @@ pasos_hab_schema = StructType([
     StructField("codigoListaUsuario", StringType(), True),
     StructField("existeDiscrepanciaPlaca", BooleanType(), True),
     StructField("confirmacionesProcesamiento", confirmaciones_procesamiento_schema, True),
-    StructField("auditoria", pasos_auditoria_schema, True),
-    StructField("id", StringType(), True),
-    StructField("_rid", StringType(), True),
-    StructField("_self", StringType(), True),
-    StructField("_etag", StringType(), True),
-    StructField("_attachments", StringType(), True),
-    StructField("_ts", LongType(), True)
+    StructField("auditoria", pasos_auditoria_schema, True)
 ])
 
 pasos_hab_map = {
