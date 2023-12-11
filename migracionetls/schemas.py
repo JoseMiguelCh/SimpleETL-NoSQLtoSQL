@@ -3,8 +3,7 @@ from pyspark.sql.types import StructType, StructField, StringType, BooleanType, 
 # Codigos EPC
 codigos_epc_hab_schema = StructType([
     StructField("id", StringType(), True),
-    StructField("epc", StringType(), True),
-    StructField("_ts", LongType(), True)
+    StructField("epc", StringType(), True)
 ])
 
 codigos_epc_hab_map = {
@@ -70,7 +69,7 @@ lista_usuarios_hab_map = {
             'schema': usuario_schema,
             'column_name': 'Usuarios',
             'join_key': 'codigoLista',
-            'destination_table_name': 'usuarios_hab', 
+            'destination_table_name': 'usuarios_lista_usuarios_hab', 
             'has_auditoria': True,
         }
     ]
@@ -133,7 +132,7 @@ pruebas_schema = ArrayType(StructType([
     StructField("rel", StringType(), True)
 ]), True)
 
-auditoria_schema = StructType([
+pruebas_auditoria_schema = StructType([
     StructField("solicitante", IntegerType(), True),
     StructField("codigoCorrelacion", StringType(), True),
     StructField("fechaHoraServidor", StringType(), True),
@@ -148,7 +147,7 @@ pruebas_hab_schema = StructType([
     StructField("codigoPaso", StringType(), True),
     StructField("codigoRespuesta", IntegerType(), True),
     StructField("pruebas", pruebas_schema, True),
-    StructField("auditoria", auditoria_schema, True),
+    StructField("auditoria", pruebas_auditoria_schema, True),
     StructField("id", StringType(), True)
 ])
 
@@ -160,13 +159,13 @@ pruebas_hab_map = {
         {
             'schema': ticket_schema,
             'column_name': 'ticket',
-            'destination_table_name': 'ticket', 
+            'destination_table_name': 'ticket_pruebas_hab', 
             'has_auditoria': True,
         },
         {
             'schema': pruebas_schema,
             'column_name': 'pruebas',
-            'destination_table_name': 'pruebas', 
+            'destination_table_name': 'pruebas_pruebas_hab', 
             'has_auditoria': False,
         }
     ]
@@ -174,7 +173,7 @@ pruebas_hab_map = {
 
 # Pasos hab
 confirmaciones_procesamiento_schema = ArrayType(StructType([
-    StructField("codigoPaso", StringType(), True),
+    #StructField("codigoPaso", StringType(), True),
     StructField("codigoIntermediador", IntegerType(), True),
     StructField("tokenConfirmacion", StringType(), True),
     StructField("codigoRespuesta", IntegerType(), True),
@@ -201,7 +200,31 @@ pasos_auditoria_schema = StructType([
     StructField("idPrueba", IntegerType(), True)
 ])
 
+ajustes_pasos_hab_schema = ArrayType(StructType([
+    StructField("id", StringType(), True),
+    StructField("codigoAjuste", StringType(), True),
+    StructField("codigoOperador", IntegerType(), True),
+    StructField("fechaHora", StringType(), True),
+    StructField("fechaRecaudo", StringType(), True),
+    StructField("codigoPasoReferencia", StringType(), True),
+    StructField("motivoAjuste", IntegerType(), True),
+    StructField("valorAjuste", LongType(), True),
+    StructField("valor", LongType(), True),
+    StructField("categoria", StringType(), True),
+    StructField("tipoOperacion", IntegerType(), True),
+    StructField("auditoria", StructType([
+        StructField("solicitante", IntegerType(), True),
+        StructField("codigoCorrelacion", StringType(), True),
+        StructField("fechaHoraServidor", StringType(), True),
+        StructField("respondedor", IntegerType(), True),
+        StructField("tiempoInicio", StringType(), True),
+        StructField("tiempoFin", StringType(), True),
+        StructField("idPrueba", IntegerType(), True)
+    ]), True)
+]), True)
+
 pasos_hab_schema = StructType([
+    StructField("id", StringType(), True),
     StructField("codigoPaso", StringType(), True),
     StructField("codigoOperador", IntegerType(), True),
     StructField("fechaHora", TimestampType(), True),
@@ -225,6 +248,7 @@ pasos_hab_schema = StructType([
     StructField("codigoListaUsuario", StringType(), True),
     StructField("existeDiscrepanciaPlaca", BooleanType(), True),
     StructField("confirmacionesProcesamiento", confirmaciones_procesamiento_schema, True),
+    StructField("ajustes", ajustes_pasos_hab_schema, True),
     StructField("auditoria", pasos_auditoria_schema, True)
 ])
 
@@ -237,7 +261,14 @@ pasos_hab_map = {
             'schema': confirmaciones_procesamiento_schema,
             'join_key': 'codigoPaso',
             'column_name': 'confirmacionesProcesamiento',
-            'destination_table_name': 'confirmaciones_procesamiento_hab', 
+            'destination_table_name': 'confirmaciones_procesamiento_pasos_hab', 
+            'has_auditoria': True,
+        },
+        {
+            'schema': ajustes_pasos_hab_schema,
+            'join_key': 'codigoPaso',
+            'column_name': 'ajustes',
+            'destination_table_name': 'ajustes_pasos_hab', 
             'has_auditoria': True,
         }
     ]

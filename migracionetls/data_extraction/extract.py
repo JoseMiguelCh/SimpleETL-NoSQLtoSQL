@@ -6,7 +6,7 @@ ENDPOINT = os.getenv("ENDPOINT")
 MASTER_KEY = os.getenv("MASTER_KEY")
 DATABASE_ID = os.getenv("DATABASE_ID")
 
-def load_cosmos_config(container):    
+def load_cosmos_config(container):
     cosmosConfig = {
         "spark.cosmos.accountEndpoint": ENDPOINT,
         "spark.cosmos.accountKey": MASTER_KEY,
