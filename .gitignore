@@ -4,3 +4,4 @@ poetry.lock
 jars/*
 pyproject.toml
 .env
+*.png
