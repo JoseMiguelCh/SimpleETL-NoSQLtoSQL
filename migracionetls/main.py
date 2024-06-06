@@ -32,7 +32,8 @@ def main():
     """
     logging.info("------ Initializing spark session -------")
     spark = initialize_spark(ENDPOINT, MASTER_KEY)
-    for container in CONTAINERS_TO_EXTRACT.items():
+    # pylint: disable=c0206
+    for container in CONTAINERS_TO_EXTRACT:
         logging.info("------ Starting extraction for %s -------", container)
         logging.info("------ Extracting data from cosmos db -------")
         df = extract_data(spark, container, CONTAINERS_TO_EXTRACT[container]['schema'], date_range)
