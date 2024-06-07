@@ -22,7 +22,7 @@ CONTAINERS_TO_EXTRACT = {
     #'ListaUsuariosHab': lista_usuarios_hab_map,
     #'NegacionesPasoHab': negaciones_paso_hab_map,
     #'PruebasHab': pruebas_hab_map,
-    'Pasos': pasos_hab_map
+    'PasosHab': pasos_hab_map
 }
 date_range = ("2024-05-20T00:00:00Z", "2024-05-20T00:05:00Z")
 
@@ -40,8 +40,7 @@ def main():
         logging.info("------ Transforming data -------")
         transformed_data = transform_data(spark, df, CONTAINERS_TO_EXTRACT[container])
         logging.info("------ Loading data into PSQL -------")
-        for source, target in transformed_data:
-            load_data(target, source)
+        [load_data(source, target) for source, target in transformed_data]
     
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
