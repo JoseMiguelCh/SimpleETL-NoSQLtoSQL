@@ -22,7 +22,7 @@ CONTAINERS_TO_EXTRACT = {
     #'ListaUsuariosHab': lista_usuarios_hab_map,
     #'NegacionesPasoHab': negaciones_paso_hab_map,
     #'PruebasHab': pruebas_hab_map,
-    'PasosNew': pasos_hab_map
+    'Pasos': pasos_hab_map
 }
 date_range = ("2024-05-20T00:00:00Z", "2024-05-20T00:05:00Z")
 
@@ -36,7 +36,7 @@ def main():
     for container in CONTAINERS_TO_EXTRACT:
         logging.info("------ Starting extraction for %s -------", container)
         logging.info("------ Extracting data from cosmos db -------")
-        df = extract_data(spark, container, CONTAINERS_TO_EXTRACT[container]['schema'], date_range)
+        df = extract_data(spark, container, CONTAINERS_TO_EXTRACT[container]['schema'], None)
         logging.info("------ Transforming data -------")
         transformed_data = transform_data(spark, df, CONTAINERS_TO_EXTRACT[container])
         logging.info("------ Loading data into PSQL -------")
