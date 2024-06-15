@@ -2,7 +2,7 @@
     Transform from nested to flat structure
 """
 # pylint: disable=import-error
-from pyspark.sql.functions import col, explode, explode_outer
+from pyspark.sql.functions import col, explode, explode_outer, from_unixtime, col, to_timestamp
 from pyspark.sql.types import StructType, ArrayType
 
 def capitalize_first_letter(s):
@@ -42,6 +42,9 @@ def transform_data(spark, df, container_map):
     has_auditoria = container_map['has_auditoria']
     columns_to_drop = [detail['column_name'] for detail in details] if details else []
     main_df = df.drop(*columns_to_drop)
+    main_df.withColumn("_ts", from_unixtime(col("_ts")).cast("timestamp"))
+    main_df.withColumn("fechaHora", \
+                       to_timestamp(col("fechaHora"), "yyyy-MM-dd'T'HH:mm:ss.SSS"))
 
     if has_auditoria:
         principal_df, auditoria_df = get_auditoria_df(main_df)
@@ -67,7 +70,3 @@ def expand_array_into_struct(df, join_key, array_column_name):
     df = df.withColumn(array_column_name, explode(col(array_column_name)))
     df = df.select(join_key, f"{array_column_name}.*")
     return df
-
-
-
-    
