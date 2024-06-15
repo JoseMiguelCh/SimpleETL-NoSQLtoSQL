@@ -1,3 +1,4 @@
+# Databricks notebook source
 """
 Main module to run the ETL process. It extracts data from Cosmos DB, transforms it and loads it into a Postgres database.
 """
@@ -37,11 +38,13 @@ def main():
         logging.info("------ Starting extraction for %s -------", container)
         logging.info("------ Extracting data from cosmos db -------")
         df = extract_data(spark, container, CONTAINERS_TO_EXTRACT[container]['schema'], date_range)
+        df.printSchema()
         logging.info("------ Transforming data -------")
         transformed_data = transform_data(spark, df, CONTAINERS_TO_EXTRACT[container])
         logging.info("------ Loading data into PSQL -------")
         [load_data(source, target) for source, target in transformed_data]
     
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
-    main()
+
+logging.basicConfig(level=logging.DEBUG)
+main()
+

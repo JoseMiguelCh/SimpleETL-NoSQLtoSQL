@@ -22,22 +22,18 @@ def load_cosmos_config(container):
     }
     return cosmos_config
 
-def extract_data(spark, container, schema, date_range=None):
+def extract_data(spark, container, schema, date_range):
     """
     Extract data from cosmos db
     """
     cosmos_config = load_cosmos_config(container)
-    if date_range:
-        df = spark.read.format("cosmos.oltp") \
-            .options(**cosmos_config) \
-            .schema(schema) \
-            .option("spark.cosmos.read.partitioning.strategy", "Restrictive") \
-            .option("spark.cosmos.read.inferSchema.enabled", "true") \
-            .load(f"SELECT * FROM c WHERE c.fechaHora BETWEEN '{date_range[0]}' AND '{date_range[1]}'")
-    else:
-        df = spark.read.format("cosmos.oltp") \
-            .options(**cosmos_config) \
-            .schema(schema) \
-            .load()
+    df = spark.read.format("cosmos.oltp") \
+        .options(**cosmos_config) \
+        .schema(schema) \
+        .option("spark.cosmos.read.partitioning.strategy", "Restrictive") \
+        .option("spark.cosmos.read.inferSchema.enabled", "true") \
+        .option("spark.cosmos.read.customQuery", f"SELECT * FROM c WHERE c.fechaHora >= '{date_range[0]}' AND c.fechaHora <= '{date_range[1]}'") \
+        .load()
+    return df
 
     return df
