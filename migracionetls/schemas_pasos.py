@@ -83,7 +83,7 @@ pasos_schema = StructType([
     StructField("confirmacionesProcesamiento", confirmaciones_procesamiento_schema, True),
     StructField("ajustes", ajustes_pasos_schema, True),
     StructField("auditoria", pasos_auditoria_schema, True),
-    StructField("_ts", TimestampType(), True),
+    StructField("_ts", LongType(), True),
 ])
 
 pasos_map = {
