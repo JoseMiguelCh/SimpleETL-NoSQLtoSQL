@@ -42,9 +42,10 @@ def transform_data(spark, df, container_map):
     has_auditoria = container_map['has_auditoria']
     columns_to_drop = [detail['column_name'] for detail in details] if details else []
     main_df = df.drop(*columns_to_drop)
-    main_df.withColumn("_ts", from_unixtime(col("_ts")).cast("timestamp"))
-    main_df.withColumn("fechaHora", \
-                       to_timestamp(col("fechaHora"), "yyyy-MM-dd'T'HH:mm:ss.SSS"))
+    main_df.withColumn("TS2", from_unixtime(col("_ts")).cast("timestamp"))
+    main_df.withColumn("FechaHora2", \
+                       to_timestamp(col("FechaHora"), "yyyy-MM-dd'T'HH:mm:ss.SSS"))
+
 
     if has_auditoria:
         principal_df, auditoria_df = get_auditoria_df(main_df)
