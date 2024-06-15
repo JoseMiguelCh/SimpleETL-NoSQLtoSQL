@@ -5,6 +5,10 @@
 from pyspark.sql.functions import col, explode, explode_outer
 from pyspark.sql.types import StructType, ArrayType
 
+def capitalize_first_letter(s):
+    """ Capitalize the first letter of a string"""
+    return s[0].upper() + s[1:]
+
 def transform_data(spark, df, container_map):
     """
     Transform the data from a nested structure to a flat structure
@@ -13,7 +17,7 @@ def transform_data(spark, df, container_map):
     #main_df = spark.createDataFrame(spark.sparkContext.emptyRDD(), container_map.get('schema'))
     details = container_map.get('details')
     # Capitalize all column names
-    df = df.select([col(c).alias(c.upper()) for c in df.columns])
+    df = df.select([col(c).alias(capitalize_first_letter(c)) for c in df.columns])
     if details is not None:
         for detail in details:
             detail_column_name = detail['column_name']
