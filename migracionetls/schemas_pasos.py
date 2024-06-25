@@ -53,7 +53,8 @@ ajustes_pasos_schema = ArrayType(StructType([
         StructField("tiempoInicio", StringType(), True),
         StructField("tiempoFin", StringType(), True),
         StructField("idPrueba", IntegerType(), True)
-    ]), True)
+    ]), True), 
+    StructField("confirmacionProcesamientos", confirmaciones_procesamiento_schema, True),
 ]), True)
 
 pasos_schema = StructType([
@@ -104,6 +105,15 @@ pasos_map = {
             'column_name': 'Ajustes',
             'destination_table_name': 'Ajustes_Pasos',
             'has_auditoria': True,
+            'details': [
+                {
+                    'schema': confirmaciones_procesamiento_schema,
+                    'join_key': 'CodigoAjuste',
+                    'column_name': 'ConfirmacionesProcesamiento',
+                    'destination_table_name': 'Confirmaciones_Ajustes',
+                    'has_auditoria': True,
+                }
+            ]
         }
     ]
 }
