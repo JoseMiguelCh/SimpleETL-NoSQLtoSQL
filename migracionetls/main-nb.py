@@ -11,8 +11,7 @@ from migracionetls.data_extraction.extract import extract_data
 from migracionetls.data_transformation.transform import transform_data
 from migracionetls.data_loading.load import load_data
 from migracionetls.spark_utils import initialize_spark
-from migracionetls.schemas import (codigos_epc_hab_map, lista_usuarios_hab_map, 
-    negaciones_paso_hab_map, pasos_hab_map, pruebas_hab_map)
+from migracionetls.schemas_pasos import pasos_map
 
 load_dotenv()
 ENDPOINT = os.getenv("ENDPOINT")
@@ -23,7 +22,7 @@ CONTAINERS_TO_EXTRACT = {
     #'ListaUsuariosHab': lista_usuarios_hab_map,
     #'NegacionesPasoHab': negaciones_paso_hab_map,
     #'PruebasHab': pruebas_hab_map,
-    'PasosNew': pasos_hab_map
+    'PasosNew': pasos_map
 }
 date_range = ("2024-05-20T00:00:00Z", "2024-05-20T00:05:00Z")
 
