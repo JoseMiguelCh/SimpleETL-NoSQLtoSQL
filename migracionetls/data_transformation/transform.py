@@ -40,8 +40,7 @@ def transform_data(spark, df, container_map):
                 detail_df = expand_array_into_struct(
                     df, join_key, detail_column_name)
             else:
-                raise ValueError(f"Unsupported column type for {
-                                 detail_column_name}")
+                raise ValueError(f"Unsupported column type for {detail_column_name}")
 
             if detail.get('has_auditoria', False):
                 detail_df, detail_auditoria = get_auditoria_df(detail_df)
