@@ -91,8 +91,16 @@ def process_auditoria(df, detail, items, table_name):
     """
     Process auditoria information and append to items.
     """
+    print("Processing auditoria")
+    print(detail)
+    df.show()
+    print(items)
+    print(table_name)
     if detail.get('has_auditoria', False):
         detail_df, detail_auditoria = get_auditoria_df(df)
+        print("Has auditoria")
+        detail_df.show()
+        detail_auditoria.show()
         items.append((detail_df, table_name))
         items.append((detail_auditoria, "auditoria_" + table_name))
     else:
