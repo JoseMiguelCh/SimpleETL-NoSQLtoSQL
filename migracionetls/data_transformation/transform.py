@@ -94,6 +94,7 @@ def process_auditoria(df, detail, items, table_name):
     if detail.get('has_auditoria', False):
         df, auditoria_df = get_auditoria_df(df)
         items.append((df, table_name))
+        auditoria_df = rename_cols(auditoria_df)
         items.append((auditoria_df, "auditoria_" + table_name))
     else:
         items.append((df, table_name))
