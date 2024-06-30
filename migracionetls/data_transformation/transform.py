@@ -91,8 +91,8 @@ def process_auditoria(df, detail, items, table_name):
     print("Processing auditoria > " + table_name)
     print("Dataframe before splitting")
     df.show()
-    print(detail)
-    print(items)
+    print("Detail", detail)
+    print("Items", items)
     if detail.get('has_auditoria', False):
         detail_df, detail_auditoria = get_auditoria_df(df)
         print("Has auditoria, splitting into two dataframes")
