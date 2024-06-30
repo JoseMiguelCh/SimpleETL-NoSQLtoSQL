@@ -2,12 +2,11 @@
     Transform from nested to flat structure
 """
 # pylint: disable=import-error, unused-import, line-too-long
-from pyspark.sql import DataFrame
 from pyspark.sql.functions import col, explode
 from pyspark.sql.types import StructType, ArrayType
 
 
-def rename_cols(df: DataFrame):
+def rename_cols(df):
     """
     Rename the columns of a dataframe to have the first letter capitalized.
     """
@@ -20,7 +19,7 @@ def rename_cols(df: DataFrame):
     return df
 
 
-def transform_data(df: DataFrame, container_map):  # pylint: disable=unused-argument
+def transform_data(df, container_map):  # pylint: disable=unused-argument
     """
     Transform the data from a nested structure to a flat structure.
     """
@@ -41,9 +40,7 @@ def transform_data(df: DataFrame, container_map):  # pylint: disable=unused-argu
                 detail_df = expand_array_into_struct(
                     df, join_key, detail_column_name)
             else:
-                raise ValueError(f"Unsupported column type for {
-                                 detail_column_name}")
-            
+                raise ValueError(f"Unsupported column type for {detail_column_name}")
             detail_df = rename_cols(detail_df)
             if detail.get('details'):
                 process_nested_details(detail_df, detail, items, ["Id"])
@@ -70,7 +67,7 @@ def transform_data(df: DataFrame, container_map):  # pylint: disable=unused-argu
     return items
 
 
-def process_nested_details(df: DataFrame, detail, items, base_columns):
+def process_nested_details(df, detail, items, base_columns):
     """
     Process nested details recursively.
     """
@@ -90,7 +87,7 @@ def process_nested_details(df: DataFrame, detail, items, base_columns):
                           inner_detail_destination_table_name)
 
 
-def process_auditoria(df: DataFrame, detail, items, table_name):
+def process_auditoria(df, detail, items, table_name):
     """
     Process auditoria information and append to items.
     """
@@ -102,7 +99,7 @@ def process_auditoria(df: DataFrame, detail, items, table_name):
         items.append((df, table_name))
 
 
-def get_auditoria_df(df: DataFrame):
+def get_auditoria_df(df):
     """
     Split the auditoria column into a separate dataframe.
     """
@@ -111,7 +108,7 @@ def get_auditoria_df(df: DataFrame):
     return main_df, auditoria_df
 
 
-def expand_array_into_struct(df: DataFrame, join_key, array_column_name):
+def expand_array_into_struct(df, join_key, array_column_name):
     """
     Expand an array column into a struct column.
     """
