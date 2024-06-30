@@ -43,8 +43,7 @@ def transform_data(spark, df, container_map): # pylint: disable=unused-argument
 
             process_auditoria(detail_df, detail, items, detail_destination_table_name)
 
-            if detail.get('details'):            
-                print("Inner details", detail.get('details'))
+            if detail.get('details'):
                 process_nested_details(detail_df, detail, items, ["Id"])
 
     destination_table_name = container_map['destination_table_name']
@@ -66,6 +65,7 @@ def process_nested_details(df, detail, items, base_columns):
     """
     Process nested details recursively.
     """
+    print("Processing nested details")
     for inner_detail in detail.get('details', []):
         inner_detail_column_name = inner_detail['column_name']
         inner_detail_destination_table_name = inner_detail['destination_table_name']
@@ -78,7 +78,10 @@ def process_nested_details(df, detail, items, base_columns):
             detail_df = expand_array_into_struct(df, join_key, inner_detail_column_name)
         else:
             raise ValueError(f"Unsupported column type for {inner_detail_column_name}")
+        print("Detail df, before dropping column:", inner_detail_column_name)
         detail_df = detail_df.drop(inner_detail_column_name)
+        print("Detail df, here we go:")
+        detail_df.show()
         process_auditoria(detail_df, inner_detail, items, inner_detail_destination_table_name)
         if inner_detail.get('details'):
             new_base_columns = base_columns[:]
@@ -91,20 +94,21 @@ def process_auditoria(df, detail, items, table_name):
     """
     Process auditoria information and append to items.
     """
-    print("Processing auditoria")
-    print(detail)
+    print("-------------------")
+    print("Processing auditoria" + table_name)
     df.show()
+    print(detail)
     print(items)
-    print(table_name)
     if detail.get('has_auditoria', False):
         detail_df, detail_auditoria = get_auditoria_df(df)
-        print("Has auditoria")
+        print("Has auditoria, splitting into two dataframes")
         detail_df.show()
         detail_auditoria.show()
         items.append((detail_df, table_name))
         items.append((detail_auditoria, "auditoria_" + table_name))
     else:
         items.append((df, table_name))
+    print("-------------------")
 
 
 def get_auditoria_df(df):
