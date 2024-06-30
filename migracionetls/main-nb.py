@@ -50,6 +50,7 @@ def additional_transformation(df, target):
     if target == 'Pasos':
         uuid_generate = udf(uuid_udf, StringType())
         df = df.withColumn('id', uuid_generate())
+    df.show()
     return df
 
 def main():
