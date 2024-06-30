@@ -8,7 +8,7 @@ import os
 import uuid
 import logging
 from dotenv import load_dotenv
-from pyspark.sql.functions import udf
+from pyspark.sql.functions import udf, col, to_timestamp, from_unixtime
 from pyspark.sql.types import StringType
 
 from migracionetls.data_extraction.extract import extract_data
@@ -50,8 +50,15 @@ def additional_transformation(df, target_table_name):
     """
     logging.info("------ Applying additional transformation -------")
     if target_table_name == 'Pasos':
-        logging.info(f"--- Transforming ----- {target_table_name}")
+        logging.info("--- Transforming ----- {%s}", target_table_name)
         df = df.withColumn('id', generate_uuid(df['id']))
+        # Transforming date fields, complete the code
+         # Transforming date fields to timestamp without time zone
+        df = df.withColumn('FechaHora', to_timestamp(col('FechaHora'), "yyyy-MM-dd'T'HH:mm:ss.SSS"))
+        df = df.withColumn('FechaRecaudo', to_timestamp(col('FechaRecaudo'), "yyyy-MM-dd'T'HH:mm:ss.SSS"))
+        df = df.withColumn('FechaActualizacionUsuario', to_timestamp(col('FechaActualizacionUsuario'), "yyyy-MM-dd'T'HH:mm:ss.SSS"))
+        df = df.withColumn('_ts', from_unixtime(col('_ts')))
+
         #df.show()
     return df
 
