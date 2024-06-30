@@ -44,7 +44,7 @@ def additional_transformation(df, target):
     if target == 'Pasos':
         df = df.withColumn('id', df['id'].cast('string'))
         df = df.withColumn('id', uuid.uuid4())
-    return df
+    return (df, target)
 
 def main():
     """
@@ -65,11 +65,9 @@ def main():
         additional_transformed_data = additional_transformation(transformed_data, container)
         
         logging.info("------ Loading data into PSQL -------")
-        for source, target in additional_transformed_data:
-            loaded_df = load_data(source, target)
-
-            # Verify that record counts match between extracted and loaded data
-            verify_counts(df, loaded_df)
+        for data, target in additional_transformed_data:
+            load_data(data, target)
+            verify_counts(df, data)
 
 logging.basicConfig(level=logging.INFO)
 main()
