@@ -43,7 +43,7 @@ def transform_data(spark, df, container_map): # pylint: disable=unused-argument
 
             process_auditoria(detail_df, detail, items, detail_destination_table_name)
 
-            if detail.get('details'):                
+            if detail.get('details'):            
                 print("Inner details", detail.get('details'))
                 process_nested_details(detail_df, detail, items, ["Id"])
 
@@ -78,9 +78,7 @@ def process_nested_details(df, detail, items, base_columns):
             detail_df = expand_array_into_struct(df, join_key, inner_detail_column_name)
         else:
             raise ValueError(f"Unsupported column type for {inner_detail_column_name}")
-        
         process_auditoria(detail_df, inner_detail, items, inner_detail_destination_table_name)
-        
         if inner_detail.get('details'):
             new_base_columns = base_columns[:]
             if inner_detail_column_name not in new_base_columns:
