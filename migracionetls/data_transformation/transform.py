@@ -78,16 +78,9 @@ def process_nested_details(df, detail, items, base_columns):
             detail_df = expand_array_into_struct(df, join_key, inner_detail_column_name)
         else:
             raise ValueError(f"Unsupported column type for {inner_detail_column_name}")
-        print("Detail df, before dropping column:", inner_detail_column_name)
-        detail_df = detail_df.drop(inner_detail_column_name)
-        print("Detail df, here we go:")
-        detail_df.show()
-        process_auditoria(detail_df, inner_detail, items, inner_detail_destination_table_name)
-        if inner_detail.get('details'):
-            new_base_columns = base_columns[:]
-            if inner_detail_column_name not in new_base_columns:
-                new_base_columns.append(inner_detail_column_name)
-            process_nested_details(detail_df, inner_detail, items, new_base_columns)
+        df1, df2 = get_inner_df(detail_df, inner_detail_column_name)
+        process_auditoria(df1, inner_detail, items, inner_detail_destination_table_name)
+        process_auditoria(df2, inner_detail, items, inner_detail_destination_table_name)
 
 
 def process_auditoria(df, detail, items, table_name):
@@ -95,7 +88,8 @@ def process_auditoria(df, detail, items, table_name):
     Process auditoria information and append to items.
     """
     print("-------------------")
-    print("Processing auditoria" + table_name)
+    print("Processing auditoria > " + table_name)
+    print("Dataframe before splitting")
     df.show()
     print(detail)
     print(items)
@@ -118,6 +112,14 @@ def get_auditoria_df(df):
     main_df = df.drop("auditoria")
     auditoria_df = df.select("Id", "auditoria.*")
     return main_df, auditoria_df
+
+def get_inner_df(df, inner_column_name):
+    """
+    Get the inner dataframe from a nested column.
+    """
+    main_df = df.drop(inner_column_name)
+    inner_df = df.select("Id", f"{inner_column_name}.*")
+    return main_df, inner_df
 
 
 def expand_array_into_struct(df, join_key, array_column_name):
