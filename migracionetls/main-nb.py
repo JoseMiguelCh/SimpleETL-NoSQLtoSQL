@@ -49,17 +49,27 @@ def additional_transformation(df, target_table_name):
     For this example, converts 'id' from text to UUID for target_table_name 'Pasos'.
     """
     logging.info("------ Applying additional transformation -------")
+    logging.info("--- Transforming ----- {%s}", target_table_name)
     if target_table_name == 'Pasos':
-        logging.info("--- Transforming ----- {%s}", target_table_name)
-        df = df.withColumn('id', generate_uuid(df['id']))
-        # Transforming date fields, complete the code
-         # Transforming date fields to timestamp without time zone
+        df = df.withColumn('Id', generate_uuid(df['id']))
         df = df.withColumn('FechaHora', to_timestamp(col('FechaHora'), "yyyy-MM-dd'T'HH:mm:ss.SSS"))
         df = df.withColumn('FechaRecaudo', to_timestamp(col('FechaRecaudo'), "yyyy-MM-dd'T'HH:mm:ss.SSS"))
         df = df.withColumn('FechaActualizacionUsuario', to_timestamp(col('FechaActualizacionUsuario'), "yyyy-MM-dd'T'HH:mm:ss.SSS"))
-        df = df.withColumn('_ts', from_unixtime(col('_ts')))
-
-        #df.show()
+        df = df.withColumn('FechaCreacion', to_timestamp(from_unixtime(col('_ts')))).drop('_ts')
+    if target_table_name == 'Confirmaciones_pasos':
+        pass
+    if target_table_name == 'Confirmaciones_ajustes':
+        pass
+    if target_table_name == 'Ajustes_pasos':
+        pass
+    if target_table_name == 'Auditoria_pasos':
+        pass
+    if target_table_name == 'Auditoria_confirmaciones_pasos':
+        pass
+    if target_table_name == 'Auditoria_confirmaciones_ajustes':
+        pass
+    if target_table_name == 'Auditoria_ajustes_pasos':
+        pass
     return df
 
 def main():
