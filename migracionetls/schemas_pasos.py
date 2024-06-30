@@ -109,7 +109,7 @@ pasos_map = {
                 {
                     'schema': confirmaciones_procesamiento_schema,
                     'join_key': 'CodigoAjuste',
-                    'column_name': 'confirmacionProcesamientos',
+                    'column_name': 'ConfirmacionProcesamientos',
                     'destination_table_name': 'Confirmaciones_Ajustes',
                     'has_auditoria': True,
                 }
