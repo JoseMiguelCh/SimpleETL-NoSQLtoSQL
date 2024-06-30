@@ -44,6 +44,7 @@ def transform_data(spark, df, container_map): # pylint: disable=unused-argument
             process_auditoria(detail_df, detail, items, detail_destination_table_name)
 
             if detail.get('details'):
+                print("Inner details", detail.get('details'))
                 process_nested_details(detail_df, detail, items)
 
     destination_table_name = container_map['destination_table_name']
