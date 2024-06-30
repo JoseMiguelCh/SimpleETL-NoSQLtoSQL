@@ -24,7 +24,6 @@ def transform_data(spark, df, container_map):
     Transform the data from a nested structure to a flat structure
     """
     items = []
-    # main_df = spark.createDataFrame(spark.sparkContext.emptyRDD(), container_map.get('schema'))
     details = container_map.get('details')
     df = rename_cols(df)
 
@@ -52,7 +51,6 @@ def transform_data(spark, df, container_map):
                 items.append((detail_df, detail_destination_table_name))
 
             if detail.get('details'):
-                print("has details", detail)
                 inner_details = detail.get('details')
                 for inner_detail in inner_details:
                     detail_column_name = inner_detail['column_name']
@@ -63,11 +61,11 @@ def transform_data(spark, df, container_map):
                         detail_df = df.select("Id", f"{detail_column_name}.*")
                     elif isinstance(column_type, ArrayType):
                         join_key = detail.get('join_key', 'Id')
-                        detail_df = expand_array_into_struct(
-                            df, join_key, detail_column_name)
+                        detail_df = expand_array_into_struct(df, join_key, detail_column_name)
                     else:
                         raise ValueError(f"Unsupported column type for {detail_column_name}")
-
+                    
+                    detail_df = detail_df.drop(detail_column_name)
                     if inner_detail.get('has_auditoria', False):
                         detail_df, detail_auditoria = get_auditoria_df(detail_df)
                         items.append((detail_df, detail_destination_table_name))
@@ -79,12 +77,8 @@ def transform_data(spark, df, container_map):
 
     destination_table_name = container_map['destination_table_name']
     has_auditoria = container_map['has_auditoria']
-    columns_to_drop = [detail['column_name']
-                       for detail in details] if details else []
+    columns_to_drop = [detail['column_name'] for detail in details] if details else []
     main_df = df.drop(*columns_to_drop)
-    #main_df.withColumn("TS2", from_unixtime(col("_ts")).cast("timestamp"))
-    #main_df.withColumn("FechaHora2",
-    #                   to_timestamp(col("FechaHora"), "yyyy-MM-dd'T'HH:mm:ss.SSS"))
 
     if has_auditoria:
         principal_df, auditoria_df = get_auditoria_df(main_df)
