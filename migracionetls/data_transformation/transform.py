@@ -43,7 +43,8 @@ def transform_data(df: DataFrame, container_map):  # pylint: disable=unused-argu
             else:
                 raise ValueError(f"Unsupported column type for {
                                  detail_column_name}")
-
+            
+            detail_df = rename_cols(detail_df)
             if detail.get('details'):
                 process_nested_details(detail_df, detail, items, ["Id"])
                 columns_to_drop = [inner_detail['column_name']
