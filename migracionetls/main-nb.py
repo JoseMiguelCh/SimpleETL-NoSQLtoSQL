@@ -8,6 +8,8 @@ import os
 import uuid
 import logging
 from dotenv import load_dotenv
+from pyspark.sql.functions import udf
+from pyspark.sql.types import StringType
 
 from migracionetls.data_extraction.extract import extract_data
 from migracionetls.data_transformation.transform import transform_data
@@ -36,15 +38,19 @@ def verify_counts(extracted_df, loaded_df):
     else:
         logging.error("Record counts do not match. Extracted: %d, Loaded: %d", extracted_count, loaded_count)
 
+def uuid_udf():
+    """ Generate a UUID for the 'id' field."""
+    return str(uuid.uuid4())
+
 def additional_transformation(df, target):
     """
     Applies an additional transformation to the data before loading it.
     For this example, converts 'id' from text to UUID for target 'Pasos'.
     """
     if target == 'Pasos':
-        df = df.withColumn('id', df['id'].cast('string'))
-        df = df.withColumn('id', uuid.uuid4())
-    return (df, target)
+        uuid_generate = udf(uuid_udf, StringType())
+        df = df.withColumn('id', uuid_generate())
+    return df
 
 def main():
     """
@@ -56,18 +62,18 @@ def main():
         logging.info("------ Starting extraction for %s -------", container)
         logging.info("------ Extracting data from cosmos db -------")
         df = extract_data(spark, container, CONTAINERS_TO_EXTRACT[container]['schema'], date_range)
-        
+
         logging.info("------ Transforming data -------")
         transformed_data = transform_data(df, CONTAINERS_TO_EXTRACT[container])
-        
+
         # Apply an additional transformation step
         logging.info("------ Applying additional transformation -------")
         additional_transformed_data = additional_transformation(transformed_data, container)
-        
+
         logging.info("------ Loading data into PSQL -------")
         for data, target in additional_transformed_data:
             load_data(data, target)
             verify_counts(df, data)
-
+        logging.info("------ ETL process completed -------")
 logging.basicConfig(level=logging.INFO)
 main()
