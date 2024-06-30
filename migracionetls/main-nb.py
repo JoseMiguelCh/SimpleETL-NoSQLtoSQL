@@ -38,8 +38,9 @@ def verify_counts(extracted_df, loaded_df):
     else:
         logging.error("Record counts do not match. Extracted: %d, Loaded: %d", extracted_count, loaded_count)
 
-def uuid_udf():
-    """ Generate a UUID for the 'id' field."""
+@udf(StringType())
+def generate_uuid(_):
+    """Generate a UUID for the 'id' field."""
     return str(uuid.uuid4())
 
 def additional_transformation(df, target_table_name):
@@ -47,10 +48,11 @@ def additional_transformation(df, target_table_name):
     Applies an additional transformation to the data before loading it.
     For this example, converts 'id' from text to UUID for target_table_name 'Pasos'.
     """
-    print(target_table_name)
-    if target_table_name == 'pasos':
-        df = df.withColumn('id', uuid_udf())
-        df.show()
+    logging.info("------ Applying additional transformation -------")
+    if target_table_name == 'Pasos':
+        logging.info(f"--- Transforming ----- {target_table_name}")
+        df = df.withColumn('id', generate_uuid(df['id']))
+        #df.show()
     return df
 
 def main():
@@ -67,14 +69,11 @@ def main():
         logging.info("------ Transforming data -------")
         transformed_data = transform_data(df, CONTAINERS_TO_EXTRACT[container])
 
-        # Apply an additional transformation step
-        logging.info("------ Applying additional transformation -------")
-        additional_transformed_data = additional_transformation(transformed_data, container)
-
         logging.info("------ Loading data into PostgreSQL -------")
-        for data, target_table_name in additional_transformed_data:
-            load_data(data, target_table_name)
-            verify_counts(df, data)
+        for data, target_table_name in transformed_data:
+            add_trans_data = additional_transformation(data, target_table_name)
+            load_data(add_trans_data, target_table_name)
+            verify_counts(df, add_trans_data)
         logging.info("------ ETL process completed -------")
 logging.basicConfig(level=logging.INFO)
 main()
