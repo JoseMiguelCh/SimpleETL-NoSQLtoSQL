@@ -18,10 +18,6 @@ ENDPOINT = os.getenv("ENDPOINT")
 MASTER_KEY = os.getenv("MASTER_KEY")
 
 CONTAINERS_TO_EXTRACT = {
-    #'CodigosEPCHab': codigos_epc_hab_map,
-    #'ListaUsuariosHab': lista_usuarios_hab_map,
-    #'NegacionesPasoHab': negaciones_paso_hab_map,
-    #'PruebasHab': pruebas_hab_map,
     'PasosNew': pasos_map
 }
 date_range = ("2024-05-20T00:00:00Z", "2024-05-20T00:05:00Z")
@@ -44,6 +40,6 @@ def main():
         [load_data(source, target) for source, target in transformed_data]
     
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 main()
 

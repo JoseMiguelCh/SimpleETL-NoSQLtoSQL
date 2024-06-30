@@ -11,6 +11,8 @@ def load_data(df, target_table):
     """
     Save dataframes to a Postgres table
     """
+    print(target_table)
+    df.show()
     pg_properties = {
         "user": os.getenv("PG_USER"),
         "password": os.getenv("PG_PASSWORD"),
