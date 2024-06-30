@@ -78,6 +78,7 @@ def process_nested_details(df, detail, items, base_columns):
             detail_df = expand_array_into_struct(df, join_key, inner_detail_column_name)
         else:
             raise ValueError(f"Unsupported column type for {inner_detail_column_name}")
+        detail_df = detail_df.drop(inner_detail_column_name)
         process_auditoria(detail_df, inner_detail, items, inner_detail_destination_table_name)
         if inner_detail.get('details'):
             new_base_columns = base_columns[:]
