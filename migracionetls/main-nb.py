@@ -42,14 +42,14 @@ def uuid_udf():
     """ Generate a UUID for the 'id' field."""
     return str(uuid.uuid4())
 
-def additional_transformation(df, target_table_name):
+def additional_transformation(df, target):
     """
     Applies an additional transformation to the data before loading it.
-    For this example, converts 'id' from text to UUID for target_table_name 'Pasos'.
     """
-    print(target_table_name)
-    if target_table_name == 'pasos':
-        df = df.withColumn('id', uuid_udf())
+    if target == 'Pasos':
+        uuid_generate = udf(uuid_udf, StringType())
+        df = df.withColumn('id', uuid_generate())
+        print("PASOS add transf")
         df.show()
     return df
 
@@ -71,9 +71,9 @@ def main():
         logging.info("------ Applying additional transformation -------")
         additional_transformed_data = additional_transformation(transformed_data, container)
 
-        logging.info("------ Loading data into PostgreSQL -------")
-        for data, target_table_name in additional_transformed_data:
-            load_data(data, target_table_name)
+        logging.info("------ Loading data into PSQL -------")
+        for data, target in additional_transformed_data:
+            load_data(data, target)
             verify_counts(df, data)
         logging.info("------ ETL process completed -------")
 logging.basicConfig(level=logging.INFO)
