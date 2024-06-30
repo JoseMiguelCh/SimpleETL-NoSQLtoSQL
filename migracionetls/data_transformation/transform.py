@@ -44,7 +44,8 @@ def transform_data(spark, df, container_map): # pylint: disable=unused-argument
             process_auditoria(detail_df, detail, items, detail_destination_table_name)
 
             if detail.get('details'):
-                process_nested_details(detail_df, detail, items)
+                process_nested_details(detail_df, detail, items, ["Id"])
+
 
     destination_table_name = container_map['destination_table_name']
     has_auditoria = container_map['has_auditoria']
@@ -61,7 +62,7 @@ def transform_data(spark, df, container_map): # pylint: disable=unused-argument
     return items
 
 
-def process_nested_details(df, detail, items):
+def process_nested_details(df, detail, items, base_columns):
     """
     Process nested details recursively.
     """
@@ -71,15 +72,20 @@ def process_nested_details(df, detail, items):
 
         column_type = df.schema[inner_detail_column_name].dataType
         if isinstance(column_type, StructType):
-            detail_df = df.select("Id", f"{inner_detail_column_name}.*")
+            detail_df = df.select(*base_columns, f"{inner_detail_column_name}.*")
         elif isinstance(column_type, ArrayType):
             join_key = inner_detail.get('join_key', 'Id')
             detail_df = expand_array_into_struct(df, join_key, inner_detail_column_name)
         else:
             raise ValueError(f"Unsupported column type for {inner_detail_column_name}")
         
-        detail_df = detail_df.drop(inner_detail_column_name)
         process_auditoria(detail_df, inner_detail, items, inner_detail_destination_table_name)
+        
+        if inner_detail.get('details'):
+            new_base_columns = base_columns[:]
+            if inner_detail_column_name not in new_base_columns:
+                new_base_columns.append(inner_detail_column_name)
+            process_nested_details(detail_df, inner_detail, items, new_base_columns)
 
 
 def process_auditoria(df, detail, items, table_name):
