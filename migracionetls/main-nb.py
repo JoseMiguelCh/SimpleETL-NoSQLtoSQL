@@ -1,8 +1,9 @@
 # Databricks notebook source
 """
-Main module to run the ETL process. It extracts data from Cosmos DB, transforms it and loads it into a Postgres database.
+Main module to run the ETL process. It extracts data from Cosmos DB, transforms
+it and loads it into a Postgres database.
 """
-# pylint: disable=import-error
+# pylint: disable=import-error, c0206
 import os
 import logging
 from dotenv import load_dotenv
@@ -28,18 +29,15 @@ def main():
     """
     logging.info("------ Initializing spark session -------")
     spark = initialize_spark(ENDPOINT, MASTER_KEY)
-    # pylint: disable=c0206
     for container in CONTAINERS_TO_EXTRACT:
         logging.info("------ Starting extraction for %s -------", container)
         logging.info("------ Extracting data from cosmos db -------")
         df = extract_data(spark, container, CONTAINERS_TO_EXTRACT[container]['schema'], date_range)
-        df.printSchema()
         logging.info("------ Transforming data -------")
-        transformed_data = transform_data(spark, df, CONTAINERS_TO_EXTRACT[container])
+        transformed_data = transform_data(df, CONTAINERS_TO_EXTRACT[container])
         logging.info("------ Loading data into PSQL -------")
-        [load_data(source, target) for source, target in transformed_data]
-    
+        for source, target in transformed_data:
+            load_data(source, target)
 
 logging.basicConfig(level=logging.INFO)
 main()
-
