@@ -29,16 +29,16 @@ def additional_transformation(df, target_table_name):
         df = df.withColumn('Valor', col('Valor').cast('double'))
         df = df.withColumn('CodigoIntermediador', lit(None).cast('string'))
         df = df.withColumn('AuditoriaId', lit(None).cast('string'))
-    if target_table_name == 'Confirmaciones_pasos':
-        df = df.withColumn('Id', generate_uuid(df['id']))
+    if target_table_name == 'Confirmaciones_Pasos':
+        df = df.withColumn('Id', generate_uuid(df['CodigoPaso']))
         df = df.withColumn('FechaCreacion', to_timestamp(from_unixtime(col('_ts')))).drop('_ts')
         df = df.withColumn('CodigoOperador', lit(None).cast('string'))
         df = df.withColumn('AuditoriaId', lit(None).cast('string'))
-    if target_table_name == 'Confirmaciones_ajustes':
+    if target_table_name == 'Confirmaciones_Ajustes':
         df = df.withColumn('CodigoOperador', lit(None).cast('string'))
         df = df.withColumn('CodigoIntermediador', lit(None).cast('string'))
         df = df.withColumn('AuditoriaId', lit(None).cast('string'))
-    if target_table_name == 'Ajustes_pasos':
+    if target_table_name == 'Ajustes_Pasos':
         df = df.withColumn('Id', generate_uuid(df['id']))
         df = df.withColumn('FechaCreacion', to_timestamp(from_unixtime(col('_ts')))).drop('_ts')
         df = df.withColumn('FechaHora', to_timestamp(col('FechaHora'), DATETIME_FORMAT))
