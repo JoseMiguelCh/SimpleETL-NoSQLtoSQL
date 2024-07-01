@@ -7,7 +7,7 @@ from pyspark.sql.functions import udf, col, lit, to_timestamp, from_unixtime
 from pyspark.sql.types import StringType
 
 DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS"
-
+NULL_FIELD = lit(None).cast('string')
 
 @udf(StringType())
 def generate_uuid(_):
@@ -33,28 +33,31 @@ def additional_transformation(df, target_table_name):
         df = df.withColumn('FechaCreacion', to_timestamp(
             from_unixtime(col('_ts')))).drop('_ts')
         df = df.withColumn('Valor', col('Valor').cast('double'))
-        df = df.withColumn('CodigoIntermediador', lit(None).cast('string'))
-        df = df.withColumn('AuditoriaId', lit(None).cast('string'))
+        df = df.withColumn('CodigoIntermediador', NULL_FIELD)
+        df = df.withColumn('AuditoriaId', NULL_FIELD)
     elif target_table_name == 'ConfirmacionPasos':
         df = df.withColumn('Id', generate_uuid(df['CodigoPaso']))
-        df = df.withColumn('FechaCreacion', lit(None).cast('string'))
-        df = df.withColumn('CodigoOperador', lit(None).cast('string'))
-        df = df.withColumn('AuditoriaId', lit(None).cast('string'))
+        df = df.withColumn('FechaCreacion', NULL_FIELD)
+        df = df.withColumn('CodigoOperador', NULL_FIELD)
+        df = df.withColumn('AuditoriaId', NULL_FIELD)
     elif target_table_name == 'ConfirmacionAjustes':
-        df = df.withColumn('CodigoOperador', lit(None).cast('string'))
-        df = df.withColumn('CodigoIntermediador', lit(None).cast('string'))
-        df = df.withColumn('AuditoriaId', lit(None).cast('string'))
+        df = df.withColumn('Id', generate_uuid(df['id']))
+        df = df.withColumn('CodigoOperador', NULL_FIELD)
+        df = df.withColumn('CodigoIntermediador', NULL_FIELD)
+        df = df.withColumn('AuditoriaId', NULL_FIELD)
+        df = df.withColumn('CodigoPaso', NULL_FIELD)
+        df = df.withColumn('FechaCreacion', NULL_FIELD)
     elif target_table_name == 'Ajustes':
         df = df.withColumn('Id', generate_uuid(df['id']))
-        df = df.withColumn('AuditoriaId', lit(None).cast('string'))
-        df = df.withColumn('FechaCreacion', lit(None).cast('string'))
+        df = df.withColumn('AuditoriaId', NULL_FIELD)
+        df = df.withColumn('FechaCreacion', NULL_FIELD)
         df = df.withColumn('FechaHora', to_timestamp(
             col('FechaHora'), DATETIME_FORMAT))
         df = df.withColumn('FechaRecaudo', to_timestamp(
             col('FechaRecaudo'), DATETIME_FORMAT))
         df = df.withColumn('Valor', col('Valor').cast('double'))
         df = df.withColumn('ValorAjuste', col('ValorAjuste').cast('double'))
-        df = df.withColumn('CodigoIntermediador', lit(None).cast('string'))
+        df = df.withColumn('CodigoIntermediador', NULL_FIELD)
         df = df.withColumnRenamed('CodigoPasoRef', 'CodigoPasoReferencia')
     elif target_table_name in ['Auditoria_Pasos', 'Auditoria_ConfirmacionPasos',
                                'Auditoria_ConfirmacionAjustes', 'Auditoria_Ajustes']:
