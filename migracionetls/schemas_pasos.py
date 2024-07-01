@@ -96,21 +96,21 @@ pasos_map = {
             'schema': confirmaciones_procesamiento_schema,
             'join_key': 'CodigoPaso',
             'column_name': 'ConfirmacionesProcesamiento',
-            'destination_table_name': 'Confirmaciones_Pasos',
+            'destination_table_name': 'ConfirmacionPasos',
             'has_auditoria': True,
         },
         {
             'schema': ajustes_pasos_schema,
             'join_key': 'CodigoPaso',
             'column_name': 'Ajustes',
-            'destination_table_name': 'Ajustes_Pasos',
+            'destination_table_name': 'Ajustes',
             'has_auditoria': True,
             'details': [
                 {
                     'schema': confirmaciones_procesamiento_schema,
                     'join_key': 'CodigoAjuste',
                     'column_name': 'ConfirmacionProcesamientos',
-                    'destination_table_name': 'Confirmaciones_Ajustes',
+                    'destination_table_name': 'ConfirmacionAjustes',
                     'has_auditoria': True,
                 }
             ]

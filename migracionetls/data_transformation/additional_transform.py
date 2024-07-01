@@ -29,28 +29,28 @@ def additional_transformation(df, target_table_name):
         df = df.withColumn('Valor', col('Valor').cast('double'))
         df = df.withColumn('CodigoIntermediador', lit(None).cast('string'))
         df = df.withColumn('AuditoriaId', lit(None).cast('string'))
-    if target_table_name == 'Confirmaciones_Pasos':
+    elif target_table_name == 'ConfirmacionPasos':
         df = df.withColumn('Id', generate_uuid(df['CodigoPaso']))
-        df = df.withColumn('FechaCreacion', to_timestamp(from_unixtime(col('_ts')))).drop('_ts')
+        df = df.withColumn('FechaCreacion',lit(None).cast('string'))
         df = df.withColumn('CodigoOperador', lit(None).cast('string'))
         df = df.withColumn('AuditoriaId', lit(None).cast('string'))
-    if target_table_name == 'Confirmaciones_Ajustes':
+    elif target_table_name == 'ConfirmacionAjustes':
         df = df.withColumn('CodigoOperador', lit(None).cast('string'))
         df = df.withColumn('CodigoIntermediador', lit(None).cast('string'))
         df = df.withColumn('AuditoriaId', lit(None).cast('string'))
-    if target_table_name == 'Ajustes_Pasos':
+    elif target_table_name == 'Ajustes':
         df = df.withColumn('Id', generate_uuid(df['id']))
-        df = df.withColumn('FechaCreacion', to_timestamp(from_unixtime(col('_ts')))).drop('_ts')
+        df = df.withColumn('FechaCreacion', lit(None).cast('string'))
         df = df.withColumn('FechaHora', to_timestamp(col('FechaHora'), DATETIME_FORMAT))
         df = df.withColumn('FechaRecaudo', to_timestamp(col('FechaRecaudo'), DATETIME_FORMAT))
         df = df.withColumnRenamed('CodigoPaso', 'CodigoPasoRef')
         df = df.withColumn('CodigoIntermediador', lit(None).cast('string'))
-    if target_table_name == 'Auditoria_pasos':
+    elif target_table_name == 'Auditoria_Pasos':
         pass
-    if target_table_name == 'Auditoria_confirmaciones_pasos':
+    elif target_table_name == 'Auditoria_ConfirmacionPasos':
         pass
-    if target_table_name == 'Auditoria_confirmaciones_ajustes':
+    elif target_table_name == 'Auditoria_ConfirmacionAjustes':
         pass
-    if target_table_name == 'Auditoria_ajustes_pasos':
+    elif target_table_name == 'Auditoria_Ajustes':
         pass
     return df
