@@ -23,5 +23,5 @@ def load_data(df, target_table):
     df.write \
         .jdbc(f"jdbc:postgresql://{os.getenv('PG_HOST')}:{os.getenv('PG_PORT')}/{os.getenv('PG_DATABASE')}",
               full_target_table,
-              mode="overwrite",
+              mode="append",
               properties=pg_properties)

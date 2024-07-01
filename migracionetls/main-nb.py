@@ -23,12 +23,21 @@ MASTER_KEY = os.getenv("MASTER_KEY")
 CONTAINERS_TO_EXTRACT = {
     'PasosNew': pasos_map
 }
-
+transformation_summaries = []
 # Define the start and end dates for the total range and interval in days
 start_date = "2024-05-20T00:00:00Z"
 end_date = "2024-06-20T00:00:00Z"
 interval_days = 1
 
+def summarize_transformations(container, date_range, transformation_count):
+    """
+    Summarize the transformations performed.
+    """
+    transformation_summaries.append({
+        "container": container,
+        "date_range": date_range,
+        "transformation_count": transformation_count
+    })
 
 def verify_counts(extracted_df, loaded_df):
     """
@@ -77,13 +86,22 @@ def main():
 
             logging.info("------ Transforming data -------")
             transformed_data = transform_data(df, CONTAINERS_TO_EXTRACT[container])
+            transformation_count = 0
 
             logging.info("------ Loading data into PostgreSQL -------")
             for data, target_table_name in transformed_data:
                 add_trans_data = additional_transformation(data, target_table_name)
                 load_data(add_trans_data, target_table_name)
                 verify_counts(df, add_trans_data)
+                transformation_count += 1
+                
+            summarize_transformations(container, date_range, transformation_count)
+
     logging.info("------ ETL process completed -------")
+    logging.info("------ Summary of Transformations -------")
+    for summary in transformation_summaries:
+        logging.info("Container: %s, Date Range: %s, Transformation Count: %d",
+                     summary['container'], summary['date_range'], summary['transformation_count'])
 
 
 logging.basicConfig(level=logging.INFO)
